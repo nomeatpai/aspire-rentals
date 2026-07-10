@@ -1,0 +1,31 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-brand-black text-white font-sans antialiased;
+}
+
+.label-caps {
+  @apply text-[11px] uppercase tracking-[0.2em] font-semibold;
+}
+
+.btn-primary {
+  @apply inline-block bg-brand-red hover:bg-brand-redDark text-white font-semibold uppercase tracking-wider text-sm px-8 py-4 rounded transition-colors;
+}
+
+.btn-outline {
+  @apply inline-block border border-white/30 hover:border-brand-red hover:text-brand-red text-white font-semibold uppercase tracking-wider text-sm px-8 py-4 rounded transition-colors;
+}
+
+input, select, textarea {
+  @apply bg-white/5 border border-white/15 rounded px-4 py-3 text-white w-full focus:outline-none focus:border-brand-red transition-colors;
+}
+
+input[type='date'] {
+  color-scheme: dark;
+}
