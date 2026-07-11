@@ -214,7 +214,7 @@ export default function VehicleDetail() {
                 </p>
                 {pricing.benchmark_daily != null && (
                   <p className="text-sm text-white/50 mt-1">
-                    <span className="line-through">{fmt(pricing.benchmark_daily)}/day on Turo</span>{' '}
+                    <span className="line-through">{fmt(pricing.benchmark_daily)}/day app price</span>{' '}
                     <span className="text-brand-red font-semibold">{Number(pricing.discount_pct)}% less direct</span>
                   </p>
                 )}
@@ -236,7 +236,7 @@ export default function VehicleDetail() {
                 <div className="mt-6 rounded border border-emerald-500/40 bg-emerald-500/10 p-5">
                   <p className="font-bold text-emerald-400">You're on the list ✓</p>
                   <p className="text-sm mt-2 text-white/75">
-                    You'll get first access the moment this vehicle goes live — before it hits Turo.
+                    You'll get first access the moment this vehicle goes live — before it's listed anywhere else.
                   </p>
                 </div>
               ) : (
@@ -245,7 +245,7 @@ export default function VehicleDetail() {
                     <p className="font-bold text-white">In final preparation now.</p>
                     <p className="mt-1">
                       Fresh fleet arrival — being detailed and mechanically prepared. Reserve first access and
-                      you book it before it ever hits Turo.
+                      you book it before it's listed anywhere else.
                     </p>
                   </div>
                   <input required placeholder="Full name" value={reserve.name} onChange={(e) => setReserve({ ...reserve, name: e.target.value })} />

@@ -34,8 +34,9 @@ export default function Footer() {
         </div>
       </div>
       <div className="border-t border-white/10 py-5 text-center text-xs text-white/35 px-5">
-        Rent-to-own and purchase pathways are offered to business customers (ABN holders) and are subject to
-        approval and formal agreement. Pricing benchmarks refresh daily against comparable Turo listings.
+        In-house ownership plans are offered to business customers (ABN holders); outright purchase with
+        finance is available through a licensed finance partner, subject to approval and formal agreement.
+        Pricing benchmarks refresh daily against comparable car-sharing marketplace listings.
       </div>
     </footer>
   )

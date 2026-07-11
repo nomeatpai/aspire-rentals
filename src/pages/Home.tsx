@@ -32,8 +32,8 @@ export default function Home() {
           <p className="mt-6 text-lg text-white/70 max-w-2xl leading-relaxed">
             Every other rental company takes your money and takes the car back. We're the only fleet where{' '}
             <strong className="text-white">your rental payments can count toward owning the car</strong> — and
-            you're always <strong className="text-white">5% under the Turo price</strong>, verified daily by
-            software.
+            you're always <strong className="text-white">5% under the car-sharing app price</strong>, verified
+            daily by software.
           </p>
           <div className="mt-10 flex flex-wrap gap-4">
             <a href="#fleet" className="btn-primary">Browse the fleet</a>
@@ -41,7 +41,7 @@ export default function Home() {
           </div>
           <div className="mt-14 grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-3xl">
             {[
-              ['Always 5% under Turo', 'Our pricing engine checks the Turo rate daily and undercuts it. Automatically.'],
+              ['Always 5% under the apps', 'Our pricing engine checks the marketplace rate daily and undercuts it. Automatically.'],
               ['Rental money that works', 'Convert to an ownership plan and recent rental weeks credit toward it.'],
               ['Walk away any week', "It's a rental until you choose otherwise. No loan. No lock-in. No bank."],
             ].map(([t, d]) => (
@@ -83,15 +83,15 @@ export default function Home() {
       <section id="price-promise" className="max-w-6xl mx-auto px-5 pt-24">
         <div className="rounded-lg bg-gradient-to-br from-brand-midnight to-brand-black border border-white/10 p-8 sm:p-12">
           <p className="label-caps text-brand-red">The price promise</p>
-          <h2 className="font-display font-bold text-3xl mt-2">Always 5% under Turo. Automatically.</h2>
+          <h2 className="font-display font-bold text-3xl mt-2">Always 5% under the app price. Automatically.</h2>
           <p className="mt-4 text-white/70 max-w-2xl leading-relaxed">
-            Our pricing engine benchmarks every vehicle against live Turo rates and sets our direct price 5%
-            below — refreshed daily. You get the same cars for less; we skip the marketplace fees. Everyone
-            wins except the middleman.
+            You could book these exact cars on the big car-sharing apps. Our pricing engine benchmarks every
+            vehicle against live marketplace rates and sets our direct price 5% below — refreshed daily. Same
+            cars for less; we skip the marketplace fees. Everyone wins except the middleman.
           </p>
           <div className="grid sm:grid-cols-3 gap-6 mt-8 text-sm">
             {[
-              ['1. Benchmark', 'We track the live Turo rate for each vehicle and its market comparables.'],
+              ['1. Benchmark', 'We track the live marketplace rate for each vehicle and its comparables.'],
               ['2. Undercut', 'Our engine prices every car 5% under the benchmark, every day.'],
               ['3. You book direct', 'Same car, lower price, direct line to the owner.'],
             ].map(([t, d]) => (
@@ -117,7 +117,7 @@ export default function Home() {
         </p>
         <div className="grid sm:grid-cols-3 gap-6 mt-8">
           {[
-            ['Rent', 'Book by the day, week or month at 5% under Turo. Walk away any week — no loan, no lock-in.', 'Everyone'],
+            ['Rent', 'Book by the day, week or month at 5% under the app price. Walk away any week — no loan, no lock-in.', 'Everyone'],
             ['Convert', 'Keep the car on a fixed weekly plan. Up to 4 recent rental weeks credit toward it. Maintenance stays our problem until title passes.', 'ABN holders — in-house'],
             ['Own', 'Hit the end of term, or pay the printed buyout figure early. No ABN? Buy outright with finance arranged through a licensed partner.', 'Drive away'],
           ].map(([t, d, tag], i) => (

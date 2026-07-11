@@ -28,7 +28,7 @@ export default function RentToOwn() {
 
       <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 mt-12">
         {[
-          ['Week 0', 'Start on a normal rental — 5% under Turo pricing. Test the car in your real operation.'],
+          ['Week 0', 'Start on a normal rental — 5% under the app price. Test the car in your real operation.'],
           ['Convert', 'Decide to keep it. We agree a weekly plan and term, and recent rental weeks can count toward it.'],
           ['Drive & pay', 'Fixed weekly payments while the car earns for your business. Maintenance stays our problem until title passes.'],
           ['Own', 'Hit the end of term — or pay the buyout figure early — and the vehicle is yours.'],

@@ -56,7 +56,7 @@ export default function VehicleCard({ listing, pricing }: { listing: Listing; pr
                 </p>
                 {pricing.benchmark_daily != null && (
                   <p className="text-xs text-white/45 mt-0.5">
-                    <span className="line-through">{fmt(pricing.benchmark_daily)} on Turo</span>
+                    <span className="line-through">{fmt(pricing.benchmark_daily)} app price</span>
                     <span className="text-brand-red font-semibold"> — {Number(pricing.discount_pct)}% less here</span>
                   </p>
                 )}
