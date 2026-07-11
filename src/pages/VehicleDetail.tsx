@@ -29,6 +29,11 @@ export default function VehicleDetail() {
   const [enqSent, setEnqSent] = useState(false)
   const [enqSubmitting, setEnqSubmitting] = useState(false)
 
+  const [reserve, setReserve] = useState({ name: '', email: '', phone: '' })
+  const [reserveSent, setReserveSent] = useState(false)
+  const [reserveSubmitting, setReserveSubmitting] = useState(false)
+  const [activeImage, setActiveImage] = useState<string | null>(null)
+
   useEffect(() => {
     if (!slug) return
     setLoading(true)
@@ -80,6 +85,25 @@ export default function VehicleDetail() {
     setEnqSubmitting(false)
   }
 
+  const submitReserve = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setReserveSubmitting(true)
+    await createEnquiry({
+      listing_id: listing.id,
+      type: 'reserve',
+      name: reserve.name,
+      email: reserve.email,
+      phone: reserve.phone,
+      message: `RESERVE — wants first access to ${listing.display_name} when it goes live`,
+    })
+    setReserveSent(true)
+    setReserveSubmitting(false)
+  }
+
+  const comingSoon = listing.status === 'coming_soon'
+  const gallery: string[] = Array.isArray(listing.gallery) ? listing.gallery : []
+  const heroImg = activeImage || listing.hero_image_url
+
   return (
     <main className="max-w-6xl mx-auto px-5 py-10">
       <Link to="/" className="text-sm text-white/50 hover:text-white">← All vehicles</Link>
@@ -87,9 +111,32 @@ export default function VehicleDetail() {
       <div className="grid lg:grid-cols-5 gap-10 mt-6">
         {/* LEFT: visual + info */}
         <div className="lg:col-span-3">
-          <div className="rounded-lg overflow-hidden border border-white/10">
-            <VehicleVisual listing={listing} tall />
+          <div className="rounded-lg overflow-hidden border border-white/10 relative">
+            {comingSoon && (
+              <span className="absolute top-4 left-4 z-10 bg-brand-red text-white text-xs font-bold uppercase tracking-wider px-4 py-2 rounded">
+                Arriving soon
+              </span>
+            )}
+            {heroImg ? (
+              <img src={heroImg} alt={listing.display_name} className="w-full object-cover h-80 sm:h-[420px]" />
+            ) : (
+              <VehicleVisual listing={listing} tall />
+            )}
           </div>
+          {gallery.length > 1 && (
+            <div className="grid grid-cols-4 sm:grid-cols-6 gap-2 mt-2">
+              {gallery.map((g) => (
+                <button
+                  key={g}
+                  type="button"
+                  onClick={() => setActiveImage(g)}
+                  className={`rounded overflow-hidden border ${heroImg === g ? 'border-brand-red' : 'border-white/10 hover:border-white/40'}`}
+                >
+                  <img src={g} alt="" className="w-full h-16 object-cover" />
+                </button>
+              ))}
+            </div>
+          )}
           <p className="label-caps text-brand-red mt-8">{listing.year} · {listing.body_type} · {listing.location}</p>
           <h1 className="font-display font-black text-3xl sm:text-4xl mt-2">{listing.display_name}</h1>
           <p className="mt-4 text-white/70 leading-relaxed">{listing.description}</p>
@@ -115,17 +162,23 @@ export default function VehicleDetail() {
           )}
 
           {/* OWNERSHIP PATHWAY */}
+          {listing.rto_available && (
           <div className="mt-10 rounded-lg border border-amber-400/30 bg-amber-400/[0.04] p-6">
-            <p className="label-caps text-amber-400">Ownership pathway</p>
+            <p className="label-caps text-amber-400">The Ownership Ladder</p>
             <h3 className="font-display font-bold text-xl mt-2">Want to keep it?</h3>
             <p className="text-sm text-white/65 mt-2 leading-relaxed">
-              This vehicle is available on a rent-to-own plan for business customers (ABN holders)
+              This vehicle is on the Ownership Ladder. ABN holders can convert to an in-house weekly
+              ownership plan — up to 4 recent rental weeks credit toward it, with a fixed buyout figure printed
+              on the agreement from day one
               {listing.buyout_price ? (
-                <> or outright purchase from <strong className="text-white">{fmt(listing.buyout_price)}</strong></>
+                <>
+                  . Or buy it outright from <strong className="text-white">{fmt(listing.buyout_price)}</strong>
+                </>
               ) : (
-                <> or outright purchase — ask for the buyout figure</>
+                <> — ask for the buyout figure</>
               )}
-              . Rental weeks you've already paid can count toward your plan.
+              . No ABN? Buy outright with finance arranged through a licensed finance partner, subject to
+              approval.
             </p>
             {enqSent ? (
               <p className="mt-4 text-emerald-400 font-semibold">
@@ -148,6 +201,7 @@ export default function VehicleDetail() {
               </form>
             )}
           </div>
+          )}
         </div>
 
         {/* RIGHT: booking panel */}
@@ -177,7 +231,33 @@ export default function VehicleDetail() {
               </>
             )}
 
-            {result?.ok ? (
+            {comingSoon ? (
+              reserveSent ? (
+                <div className="mt-6 rounded border border-emerald-500/40 bg-emerald-500/10 p-5">
+                  <p className="font-bold text-emerald-400">You're on the list ✓</p>
+                  <p className="text-sm mt-2 text-white/75">
+                    You'll get first access the moment this vehicle goes live — before it hits Turo.
+                  </p>
+                </div>
+              ) : (
+                <form onSubmit={submitReserve} className="mt-6 space-y-3">
+                  <div className="rounded bg-white/5 p-4 text-sm text-white/70 leading-relaxed">
+                    <p className="font-bold text-white">In final preparation now.</p>
+                    <p className="mt-1">
+                      Fresh fleet arrival — being detailed and mechanically prepared. Reserve first access and
+                      you book it before it ever hits Turo.
+                    </p>
+                  </div>
+                  <input required placeholder="Full name" value={reserve.name} onChange={(e) => setReserve({ ...reserve, name: e.target.value })} />
+                  <input required type="email" placeholder="Email" value={reserve.email} onChange={(e) => setReserve({ ...reserve, email: e.target.value })} />
+                  <input placeholder="Phone" value={reserve.phone} onChange={(e) => setReserve({ ...reserve, phone: e.target.value })} />
+                  <button disabled={reserveSubmitting} className="btn-primary w-full">
+                    {reserveSubmitting ? 'Sending…' : 'Reserve first access'}
+                  </button>
+                  <p className="text-[11px] text-white/40">No payment, no obligation — just first in line.</p>
+                </form>
+              )
+            ) : result?.ok ? (
               <div className="mt-6 rounded border border-emerald-500/40 bg-emerald-500/10 p-5">
                 <p className="font-bold text-emerald-400">Booking request received ✓</p>
                 <p className="text-sm mt-2 text-white/75">

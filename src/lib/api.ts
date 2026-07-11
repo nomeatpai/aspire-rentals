@@ -50,7 +50,7 @@ export interface Pricing {
 
 export async function fetchCatalogue(): Promise<{ listings: Listing[]; pricing: Map<string, Pricing> }> {
   const [l, p] = await Promise.all([
-    supabase.from('listings').select('*').eq('status', 'live').order('sort_order'),
+    supabase.from('listings').select('*').in('status', ['live', 'coming_soon']).order('sort_order'),
     supabase.from('v_live_pricing').select('*'),
   ])
   const pricing = new Map<string, Pricing>()

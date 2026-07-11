@@ -44,10 +44,15 @@ export default function RentToOwn() {
       <div className="mt-12 rounded-lg border border-white/10 bg-white/[0.02] p-6 sm:p-8 max-w-3xl">
         <p className="label-caps text-brand-red">Who it's for</p>
         <p className="mt-3 text-white/70 leading-relaxed text-sm sm:text-base">
-          Rent-to-own plans are offered to <strong className="text-white">business customers with an active
-          ABN</strong> — rideshare and delivery operators, trades, chauffeur services, and companies building a
-          fleet without tying up capital. Every plan is documented in a formal agreement with a transparent
-          payment schedule and buyout figure. Not a consumer credit product.
+          In-house weekly plans are offered to <strong className="text-white">business customers with an
+          active ABN</strong> — rideshare and delivery operators, trades, chauffeur services, and companies
+          building a fleet without tying up capital. Every plan is documented in a formal agreement with a
+          transparent payment schedule and a buyout figure that never moves. Not a consumer credit product.
+        </p>
+        <p className="mt-3 text-white/70 leading-relaxed text-sm sm:text-base">
+          <strong className="text-white">No ABN?</strong> You can still own the car — buy outright with
+          finance arranged through a licensed finance partner, subject to their approval. We introduce you;
+          they handle the finance conversation.
         </p>
       </div>
 

@@ -33,8 +33,13 @@ export default function VehicleCard({ listing, pricing }: { listing: Listing; pr
   return (
     <Link
       to={`/vehicles/${listing.slug}`}
-      className="group rounded-lg overflow-hidden border border-white/10 hover:border-brand-red/60 transition-colors bg-white/[0.02]"
+      className="group relative rounded-lg overflow-hidden border border-white/10 hover:border-brand-red/60 transition-colors bg-white/[0.02]"
     >
+      {listing.status === 'coming_soon' && (
+        <span className="absolute top-3 left-3 z-10 bg-brand-red text-white text-[11px] font-bold uppercase tracking-wider px-3 py-1.5 rounded">
+          Arriving soon
+        </span>
+      )}
       <VehicleVisual listing={listing} />
       <div className="p-5">
         <p className="label-caps text-brand-red">{listing.year} · {listing.body_type}</p>
@@ -75,7 +80,7 @@ export default function VehicleCard({ listing, pricing }: { listing: Listing; pr
         </div>
         {listing.rto_available && (
           <p className="mt-4 text-[11px] uppercase tracking-wider font-semibold text-amber-400/90">
-            Rent-to-own available
+            Ownership Ladder — rental payments can count toward buying it
           </p>
         )}
       </div>

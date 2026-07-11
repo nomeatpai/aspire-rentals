@@ -30,19 +30,20 @@ export default function Home() {
             Drive it. Love it. <span className="text-brand-red">Own it.</span>
           </h1>
           <p className="mt-6 text-lg text-white/70 max-w-2xl leading-relaxed">
-            The vehicles you'd book on Turo — direct from the fleet owner, always{' '}
-            <strong className="text-white">5% under the Turo price</strong>. And when you're ready, every
-            rental can become a rent-to-own or purchase pathway.
+            Every other rental company takes your money and takes the car back. We're the only fleet where{' '}
+            <strong className="text-white">your rental payments can count toward owning the car</strong> — and
+            you're always <strong className="text-white">5% under the Turo price</strong>, verified daily by
+            software.
           </p>
           <div className="mt-10 flex flex-wrap gap-4">
             <a href="#fleet" className="btn-primary">Browse the fleet</a>
-            <Link to="/rent-to-own" className="btn-outline">How rent-to-own works</Link>
+            <Link to="/rent-to-own" className="btn-outline">The Ownership Ladder</Link>
           </div>
           <div className="mt-14 grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-3xl">
             {[
-              ['5% under Turo', 'Live pricing benchmarked daily against Turo listings'],
-              ['No middleman', 'Book direct with the owner — faster answers, better service'],
-              ['Rent-to-own', 'Business customers can turn rental weeks into ownership'],
+              ['Always 5% under Turo', 'Our pricing engine checks the Turo rate daily and undercuts it. Automatically.'],
+              ['Rental money that works', 'Convert to an ownership plan and recent rental weeks credit toward it.'],
+              ['Walk away any week', "It's a rental until you choose otherwise. No loan. No lock-in. No bank."],
             ].map(([t, d]) => (
               <div key={t} className="border-l-2 border-brand-red pl-4">
                 <p className="font-bold">{t}</p>
@@ -105,13 +106,20 @@ export default function Home() {
 
       {/* OWNERSHIP LADDER */}
       <section className="max-w-6xl mx-auto px-5 pt-24">
-        <p className="label-caps text-brand-red">The twist</p>
-        <h2 className="font-display font-bold text-3xl mt-2">Every rental is a road to ownership</h2>
+        <p className="label-caps text-brand-red">The Aspire Ownership Ladder</p>
+        <h2 className="font-display font-bold text-3xl mt-2">
+          Rent it. Love it. <span className="text-brand-red">Keep it.</span>
+        </h2>
+        <p className="mt-4 text-white/70 max-w-2xl leading-relaxed">
+          Every week you rent is a real-world test drive. Decide to keep the car and your recent rental
+          payments can credit into an ownership plan — with a fixed weekly amount and a buyout figure that's
+          printed on the agreement from day one, never renegotiated.
+        </p>
         <div className="grid sm:grid-cols-3 gap-6 mt-8">
           {[
-            ['Rent', 'Book by the day, week or month at 5% under Turo. Every week you drive is a real-world test drive.', 'Available to everyone'],
-            ['Rent-to-own', 'Business customers can convert to a weekly rent-to-own plan where payments build toward ownership.', 'ABN holders'],
-            ['Own', 'Buy outright at any point. Ask for the buyout figure on any vehicle in the fleet.', 'Drive away'],
+            ['Rent', 'Book by the day, week or month at 5% under Turo. Walk away any week — no loan, no lock-in.', 'Everyone'],
+            ['Convert', 'Keep the car on a fixed weekly plan. Up to 4 recent rental weeks credit toward it. Maintenance stays our problem until title passes.', 'ABN holders — in-house'],
+            ['Own', 'Hit the end of term, or pay the printed buyout figure early. No ABN? Buy outright with finance arranged through a licensed partner.', 'Drive away'],
           ].map(([t, d, tag], i) => (
             <div key={t} className="relative border border-white/10 rounded-lg p-6 bg-white/[0.02]">
               <span className="font-display font-black text-5xl text-white/10 absolute top-4 right-5">{i + 1}</span>
@@ -121,8 +129,12 @@ export default function Home() {
             </div>
           ))}
         </div>
-        <div className="mt-8">
-          <Link to="/rent-to-own" className="btn-primary">Explore rent-to-own</Link>
+        <p className="mt-6 text-sm text-white/45">
+          The Ownership Ladder runs on a small fleet by design — when the current vehicles are allocated, the
+          program closes until we acquire more.
+        </p>
+        <div className="mt-6">
+          <Link to="/rent-to-own" className="btn-primary">Explore the Ownership Ladder</Link>
         </div>
       </section>
     </main>
