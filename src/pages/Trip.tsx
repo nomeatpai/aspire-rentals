@@ -15,6 +15,8 @@ interface TripInfo {
   vehicle_name: string
   vehicle_image: string | null
   customer_first_name: string
+  licence_uploaded: boolean
+  agreement_accepted: boolean
 }
 
 const STAGES = [
@@ -77,6 +79,78 @@ function PhotoUploader({ tripRef, phase }: { tripRef: string; phase: 'checkin' |
       <button type="button" onClick={() => input.current?.click()} disabled={uploading} className="btn-outline mt-4 !py-2.5 !px-5 text-xs w-full">
         {uploading ? 'Uploading…' : files.length ? 'Add more photos' : 'Upload photos'}
       </button>
+    </div>
+  )
+}
+
+function CheckInRequirements({ trip, onUpdate }: { trip: TripInfo; onUpdate: (t: TripInfo) => void }) {
+  const [name, setName] = useState('')
+  const [busy, setBusy] = useState(false)
+  const licInput = useRef<HTMLInputElement>(null)
+  const [licBusy, setLicBusy] = useState(false)
+
+  const accept = async () => {
+    if (!name.trim()) return
+    setBusy(true)
+    await supabase.rpc('accept_agreement', { p_ref: trip.ref, p_name: name.trim() })
+    onUpdate({ ...trip, agreement_accepted: true })
+    setBusy(false)
+  }
+
+  const uploadLicence = async (list: FileList | null) => {
+    if (!list?.length) return
+    setLicBusy(true)
+    for (const file of Array.from(list)) {
+      const n = `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.]/g, '_')}`
+      await supabase.storage.from('guest-docs').upload(`${trip.ref}/licence/${n}`, file)
+    }
+    await supabase.rpc('mark_licence_uploaded', { p_ref: trip.ref })
+    onUpdate({ ...trip, licence_uploaded: true })
+    setLicBusy(false)
+  }
+
+  const done = trip.licence_uploaded && trip.agreement_accepted
+  return (
+    <div className={`mt-8 rounded-lg border p-5 ${done ? 'border-emerald-500/40 bg-emerald-500/5' : 'border-amber-400/40 bg-amber-400/[0.05]'}`}>
+      <p className={`label-caps ${done ? 'text-emerald-400' : 'text-amber-400'}`}>
+        {done ? 'Check-in complete ✓' : 'Before you drive — 2 quick steps'}
+      </p>
+
+      {/* Licence */}
+      <div className="mt-4 flex items-start gap-3">
+        <span className={`mt-0.5 text-lg ${trip.licence_uploaded ? 'text-emerald-400' : 'text-white/30'}`}>{trip.licence_uploaded ? '✓' : '1.'}</span>
+        <div className="flex-1">
+          <p className="font-bold text-sm">Driver licence {trip.licence_uploaded && <span className="text-emerald-400 font-normal">— received</span>}</p>
+          {!trip.licence_uploaded && (
+            <>
+              <p className="text-xs text-white/55 mt-1">Photo of the front and back. Stored privately, seen only by our team, deleted after your trip.</p>
+              <input ref={licInput} type="file" accept="image/*" multiple hidden onChange={(e) => uploadLicence(e.target.files)} />
+              <button type="button" onClick={() => licInput.current?.click()} disabled={licBusy} className="btn-outline mt-2 !py-2 !px-4 text-xs">
+                {licBusy ? 'Uploading…' : 'Upload licence'}
+              </button>
+            </>
+          )}
+        </div>
+      </div>
+
+      {/* Agreement */}
+      <div className="mt-4 flex items-start gap-3">
+        <span className={`mt-0.5 text-lg ${trip.agreement_accepted ? 'text-emerald-400' : 'text-white/30'}`}>{trip.agreement_accepted ? '✓' : '2.'}</span>
+        <div className="flex-1">
+          <p className="font-bold text-sm">Hire agreement {trip.agreement_accepted && <span className="text-emerald-400 font-normal">— accepted</span>}</p>
+          {!trip.agreement_accepted && (
+            <>
+              <div className="text-xs text-white/55 mt-1 leading-relaxed space-y-1">
+                <p>The short version: only you drive it (licensed, unimpaired) · NSW road rules and tolls are yours · return it with the same fuel, in the same condition · no smoking, no racing, no off-road · damage or theft during your hire may be claimed against your bond and, where applicable, you · we can end the hire for misuse · full terms provided at handover.</p>
+              </div>
+              <input className="mt-3" placeholder="Type your full legal name to accept" value={name} onChange={(e) => setName(e.target.value)} />
+              <button type="button" onClick={accept} disabled={busy || !name.trim()} className="btn-primary mt-2 !py-2 !px-5 text-xs disabled:opacity-40">
+                {busy ? 'Saving…' : 'I accept the hire agreement'}
+              </button>
+            </>
+          )}
+        </div>
+      </div>
     </div>
   )
 }
@@ -151,6 +225,9 @@ export default function Trip() {
           </div>
         )}
       </div>
+
+      {/* CHECK-IN REQUIREMENTS */}
+      <CheckInRequirements trip={trip} onUpdate={(t) => setTrip(t)} />
 
       <div className="grid sm:grid-cols-2 gap-4 mt-8">
         <PhotoUploader tripRef={trip.ref} phase="checkin" />
