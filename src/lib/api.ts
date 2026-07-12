@@ -80,16 +80,18 @@ export interface Quote {
   days: number
   daily: number
   subtotal: number
+  delivery_fee: number
   total: number
   benchmark: number
   discount_pct: number
+  delivery_radius_km: number
   available: boolean
   error?: string
   min_days?: number
 }
 
-export const getQuote = (listing_id: string, start_date: string, end_date: string): Promise<Quote> =>
-  callApi('quote', { listing_id, start_date, end_date })
+export const getQuote = (listing_id: string, start_date: string, end_date: string, delivery_option = 'pickup'): Promise<Quote> =>
+  callApi('quote', { listing_id, start_date, end_date, delivery_option })
 
 export const createBooking = (payload: Record<string, unknown>) => callApi('book', payload)
 

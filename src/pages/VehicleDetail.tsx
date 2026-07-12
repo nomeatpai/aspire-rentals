@@ -22,6 +22,9 @@ export default function VehicleDetail() {
   const [quoting, setQuoting] = useState(false)
 
   const [form, setForm] = useState({ customer_name: '', company: '', abn: '', email: '', phone: '', interest: 'rent', notes: '' })
+  const [delivery, setDelivery] = useState<'pickup' | 'delivery_local' | 'delivery_airport'>('pickup')
+  const [deliveryAddress, setDeliveryAddress] = useState('')
+  const [pickupTime, setPickupTime] = useState('10:00')
   const [submitting, setSubmitting] = useState(false)
   const [result, setResult] = useState<{ ok?: boolean; ref?: string; error?: string } | null>(null)
 
@@ -51,13 +54,13 @@ export default function VehicleDetail() {
     }
     setQuoting(true)
     const t = setTimeout(() => {
-      getQuote(listing.id, start, end).then((q) => {
+      getQuote(listing.id, start, end, delivery).then((q) => {
         setQuote(q)
         setQuoting(false)
       })
     }, 250)
     return () => clearTimeout(t)
-  }, [listing, start, end])
+  }, [listing, start, end, delivery])
 
   if (loading) return <main className="max-w-6xl mx-auto px-5 py-24 text-white/50">Loading…</main>
   if (!listing)
@@ -72,7 +75,11 @@ export default function VehicleDetail() {
     e.preventDefault()
     if (!quote || quote.error || !quote.available) return
     setSubmitting(true)
-    const res = await createBooking({ listing_id: listing.id, start_date: start, end_date: end, ...form })
+    const res = await createBooking({
+      listing_id: listing.id, start_date: start, end_date: end,
+      delivery_option: delivery, delivery_address: delivery === 'delivery_local' ? deliveryAddress : null,
+      pickup_time: pickupTime, ...form,
+    })
     setResult(res)
     setSubmitting(false)
   }
@@ -269,20 +276,56 @@ export default function VehicleDetail() {
               <form onSubmit={submitBooking} className="mt-6 space-y-3">
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="text-xs text-white/50">Pick up</label>
+                    <label className="text-xs text-white/50">Trip start</label>
                     <input type="date" min={today} value={start} onChange={(e) => setStart(e.target.value)} />
                   </div>
                   <div>
-                    <label className="text-xs text-white/50">Return</label>
+                    <label className="text-xs text-white/50">Trip end</label>
                     <input type="date" min={start} value={end} onChange={(e) => setEnd(e.target.value)} />
                   </div>
+                </div>
+                <div>
+                  <label className="text-xs text-white/50">Handover time</label>
+                  <input type="time" value={pickupTime} onChange={(e) => setPickupTime(e.target.value)} />
+                </div>
+
+                <div>
+                  <label className="text-xs text-white/50">Pickup or delivery</label>
+                  <div className="space-y-2 mt-1">
+                    {([
+                      ['pickup', 'Pickup — Kingsgrove', 'Free'],
+                      ['delivery_local', `Delivered to you (within ${quote?.delivery_radius_km ?? 10}km)`, '$150'],
+                      ['delivery_airport', 'Delivered to Sydney Airport', '$150'],
+                    ] as const).map(([val, label, price]) => (
+                      <label key={val} className={`flex items-center justify-between gap-3 rounded border px-4 py-3 cursor-pointer text-sm transition-colors ${delivery === val ? 'border-brand-red bg-brand-red/10' : 'border-white/15 hover:border-white/40'}`}>
+                        <span className="flex items-center gap-3">
+                          <input type="radio" name="delivery" checked={delivery === val} onChange={() => setDelivery(val)} className="w-auto accent-[#f5213a]" />
+                          {label}
+                        </span>
+                        <span className="font-semibold text-white/70">{price}</span>
+                      </label>
+                    ))}
+                  </div>
+                  {delivery === 'delivery_local' && (
+                    <input className="mt-2" required placeholder="Delivery address" value={deliveryAddress} onChange={(e) => setDeliveryAddress(e.target.value)} />
+                  )}
                 </div>
 
                 {quoting && <p className="text-sm text-white/40">Updating quote…</p>}
                 {quote && !quote.error && (
                   <div className="rounded bg-white/5 p-4 text-sm space-y-1">
                     <div className="flex justify-between">
-                      <span className="text-white/60">{quote.days} days × {fmt(quote.daily)}</span>
+                      <span className="text-white/60">{fmt(quote.daily)} × {quote.days} days</span>
+                      <span>{fmt(quote.subtotal)}</span>
+                    </div>
+                    {quote.delivery_fee > 0 && (
+                      <div className="flex justify-between">
+                        <span className="text-white/60">{delivery === 'delivery_airport' ? 'Airport delivery' : 'Delivery'}</span>
+                        <span>{fmt(quote.delivery_fee)}</span>
+                      </div>
+                    )}
+                    <div className="flex justify-between border-t border-white/10 pt-1 mt-1">
+                      <span className="font-semibold">Trip total</span>
                       <span className="font-bold">{fmt(quote.total)}</span>
                     </div>
                     <div className="flex justify-between text-xs text-white/45">
