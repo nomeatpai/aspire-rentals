@@ -8,6 +8,7 @@ import Footer from './components/Footer'
 import Home from './pages/Home'
 import VehicleDetail from './pages/VehicleDetail'
 import RentToOwn from './pages/RentToOwn'
+import Trip from './pages/Trip'
 
 function ScrollToTop() {
   const { pathname } = useLocation()
@@ -24,6 +25,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         <Route path="/" element={<Home />} />
         <Route path="/vehicles/:slug" element={<VehicleDetail />} />
         <Route path="/rent-to-own" element={<RentToOwn />} />
+        <Route path="/trip/:ref" element={<Trip />} />
         <Route path="*" element={<Home />} />
       </Routes>
       <Footer />
