@@ -17,6 +17,7 @@ interface TripInfo {
   customer_first_name: string
   licence_uploaded: boolean
   agreement_accepted: boolean
+  selfie_uploaded: boolean
 }
 
 const STAGES = [
@@ -97,6 +98,9 @@ function CheckInRequirements({ trip, onUpdate }: { trip: TripInfo; onUpdate: (t:
     setBusy(false)
   }
 
+  const selfieInput = useRef<HTMLInputElement>(null)
+  const [selfieBusy, setSelfieBusy] = useState(false)
+
   const uploadLicence = async (list: FileList | null) => {
     if (!list?.length) return
     setLicBusy(true)
@@ -109,11 +113,23 @@ function CheckInRequirements({ trip, onUpdate }: { trip: TripInfo; onUpdate: (t:
     setLicBusy(false)
   }
 
-  const done = trip.licence_uploaded && trip.agreement_accepted
+  const uploadSelfie = async (list: FileList | null) => {
+    if (!list?.length) return
+    setSelfieBusy(true)
+    for (const file of Array.from(list)) {
+      const n = `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.]/g, '_')}`
+      await supabase.storage.from('guest-docs').upload(`${trip.ref}/selfie/${n}`, file)
+    }
+    await supabase.rpc('mark_selfie_uploaded', { p_ref: trip.ref })
+    onUpdate({ ...trip, selfie_uploaded: true })
+    setSelfieBusy(false)
+  }
+
+  const done = trip.licence_uploaded && trip.agreement_accepted && trip.selfie_uploaded
   return (
     <div className={`mt-8 rounded-lg border p-5 ${done ? 'border-emerald-500/40 bg-emerald-500/5' : 'border-amber-400/40 bg-amber-400/[0.05]'}`}>
       <p className={`label-caps ${done ? 'text-emerald-400' : 'text-amber-400'}`}>
-        {done ? 'Check-in complete ✓' : 'Before you drive — 2 quick steps'}
+        {done ? 'Verification complete ✓' : 'Get verified to drive — 3 quick steps'}
       </p>
 
       {/* Licence */}
@@ -133,9 +149,26 @@ function CheckInRequirements({ trip, onUpdate }: { trip: TripInfo; onUpdate: (t:
         </div>
       </div>
 
+      {/* Selfie */}
+      <div className="mt-4 flex items-start gap-3">
+        <span className={`mt-0.5 text-lg ${trip.selfie_uploaded ? 'text-emerald-400' : 'text-white/30'}`}>{trip.selfie_uploaded ? '✓' : '2.'}</span>
+        <div className="flex-1">
+          <p className="font-bold text-sm">Verification selfie {trip.selfie_uploaded && <span className="text-emerald-400 font-normal">— received</span>}</p>
+          {!trip.selfie_uploaded && (
+            <>
+              <p className="text-xs text-white/55 mt-1">A photo of you holding your licence next to your face. Confirms the licence is yours — same as the big platforms. Stored privately, deleted after your trip.</p>
+              <input ref={selfieInput} type="file" accept="image/*" capture="user" hidden onChange={(e) => uploadSelfie(e.target.files)} />
+              <button type="button" onClick={() => selfieInput.current?.click()} disabled={selfieBusy} className="btn-outline mt-2 !py-2 !px-4 text-xs">
+                {selfieBusy ? 'Uploading…' : 'Take verification selfie'}
+              </button>
+            </>
+          )}
+        </div>
+      </div>
+
       {/* Agreement */}
       <div className="mt-4 flex items-start gap-3">
-        <span className={`mt-0.5 text-lg ${trip.agreement_accepted ? 'text-emerald-400' : 'text-white/30'}`}>{trip.agreement_accepted ? '✓' : '2.'}</span>
+        <span className={`mt-0.5 text-lg ${trip.agreement_accepted ? 'text-emerald-400' : 'text-white/30'}`}>{trip.agreement_accepted ? '✓' : '3.'}</span>
         <div className="flex-1">
           <p className="font-bold text-sm">Hire agreement {trip.agreement_accepted && <span className="text-emerald-400 font-normal">— accepted</span>}</p>
           {!trip.agreement_accepted && (
