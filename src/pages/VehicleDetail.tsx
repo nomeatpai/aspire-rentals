@@ -266,10 +266,12 @@ export default function VehicleDetail() {
               )
             ) : result?.ok ? (
               <div className="mt-6 rounded border border-emerald-500/40 bg-emerald-500/10 p-5">
-                <p className="font-bold text-emerald-400">Booking request received ✓</p>
+                <p className="font-bold text-emerald-400">Booked ✓ — dates locked</p>
                 <p className="text-sm mt-2 text-white/75">
-                  Reference <strong>{result.ref}</strong>. We confirm availability and send your secure payment
-                  link within hours — usually much faster.
+                  Reference <strong>{result.ref}</strong>. Your confirmation and secure payment link are on the
+                  way to your inbox. Complete payment and verification on your{' '}
+                  <a href={`/trip/${result.ref}`} className="text-brand-red underline">trip page</a> and you're
+                  set for handover.
                 </p>
               </div>
             ) : (
@@ -359,11 +361,11 @@ export default function VehicleDetail() {
                   disabled={submitting || !quote || !!quote.error || !quote.available || quote.days < (listing.min_days || 1)}
                   className="btn-primary w-full disabled:opacity-40 disabled:cursor-not-allowed"
                 >
-                  {submitting ? 'Sending…' : `Request booking${quote && !quote.error ? ` · ${fmt(quote.total)}` : ''}`}
+                  {submitting ? 'Booking…' : `Book instantly${quote && !quote.error ? ` · ${fmt(quote.total)}` : ''}`}
                 </button>
                 <p className="text-[11px] text-white/40 leading-relaxed">
-                  No payment taken now. We confirm availability and send a secure payment link. Minimum{' '}
-                  {listing.min_days} days.
+                  Instant confirmation — your dates lock now, secure card payment link arrives by email.
+                  Minimum {listing.min_days} days.
                 </p>
               </form>
             )}
